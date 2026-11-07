@@ -1,0 +1,14 @@
+schema: spec-driven
+context: |
+  NexQuiz, EIF400. pnpm monorepo; React and two independent NestJS APIs.
+  Hito 1 foundation is retained; Hito 2 adds identity only, no gameplay. Four layers: domain, application, infrastructure, presentation.
+  Composition belongs in modules. Domain and application are framework independent.
+  Private databases and independent Prisma clients. No cross-service table access.
+  RS256 identity architecture. Game server authoritative in subsequent milestones.
+rules:
+  proposal:
+    - Describe scope and explicitly excluded future milestones.
+  specs:
+    - Use normative SHALL requirements and Given/When/Then scenarios.
+  tasks:
+    - Record validation evidence and mark blocked checks honestly.

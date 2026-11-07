@@ -1,0 +1,42 @@
+{
+  "name": "nexquiz",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "node --test tests/tooling.test.cjs tests/prisma-runner.test.cjs tests/oracle-deployment.test.cjs tests/demo-teacher.test.cjs && pnpm architecture && pnpm -r test && pnpm test:scalar",
+    "architecture": "node scripts/check-architecture.cjs",
+    "generate": "pnpm --filter nexquiz-auth-api generate && pnpm --filter nexquiz-game-api generate",
+    "setup": "node scripts/setup.cjs",
+    "db:deploy": "pnpm --filter nexquiz-auth-api db:deploy && pnpm --filter nexquiz-game-api db:deploy",
+    "test:e2e": "node node_modules/@playwright/test/cli.js test",
+    "verify": "pnpm generate && pnpm db:validate && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "release:build": "node scripts/release.cjs",
+    "deploy:check": "node scripts/check-production.cjs",
+    "lint": "pnpm architecture && pnpm -r lint",
+    "db:validate": "pnpm --filter nexquiz-auth-api db:validate && pnpm --filter nexquiz-game-api db:validate",
+    "verify:http": "node scripts/verify-http.cjs",
+    "verify:oracle": "node --test tests/oracle-deployment.test.cjs && node scripts/verify-oracle-config.cjs",
+    "verify:monitoring": "node scripts/verify-monitoring.cjs",
+    "test:scalar": "node --test tests/scalar-http.test.cjs",
+    "test:docs": "node node_modules/@playwright/test/cli.js test --config playwright.docs.config.ts",
+    "test:identity": "node node_modules/@playwright/test/cli.js test --config playwright.auth.config.ts",
+    "test:identity:db": "node --test tests/integration/auth-persistence.test.cjs",
+    "test:game:db": "node --test tests/integration/game-persistence.test.cjs",
+    "test:game:http": "pnpm --filter nexquiz-game-api exec jest --runInBand test/session-http.db.spec.ts test/live-gateway.db.spec.ts",
+    "audit:repository": "node scripts/audit-repository.cjs",
+    "prepare:scalar": "node scripts/prepare-scalar.cjs",
+    "test:quizzes": "node node_modules/@playwright/test/cli.js test --config playwright.quizzes.config.ts",
+    "test:live": "node node_modules/@playwright/test/cli.js test --config playwright.live.config.ts"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@playwright/test": "1.58.2"
+  }
+}
