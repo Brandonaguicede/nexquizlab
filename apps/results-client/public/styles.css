@@ -1,0 +1,28 @@
+:root { color-scheme: light; --ink: #1d2a44; --muted: #55607a; --line: #d4d9e4; --accent: #3557c4; --ok: #1d6b45; --error: #a33a2c; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: #f5f6fa; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 860px; margin: 0 auto; padding: 40px 16px 64px; }
+h1 { font-size: clamp(2rem, 5vw, 2.8rem); margin: 0 0 12px; letter-spacing: -.02em; }
+h2 { font-size: 1.3rem; margin: 0 0 16px; }
+.eyebrow { color: var(--accent); font-weight: 700; font-size: .85rem; margin: 0 0 8px; }
+.lead { color: var(--muted); line-height: 1.6; max-width: 62ch; }
+section { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 24px; margin-top: 24px; }
+.config, .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 20px 0 0; }
+.config div, .summary div { border-left: 3px solid var(--accent); padding-left: 10px; }
+dt { font-size: .8rem; color: var(--muted); font-weight: 700; }
+dd { margin: 4px 0 0; overflow-wrap: anywhere; font-family: ui-monospace, Consolas, monospace; font-size: .9rem; }
+form { display: grid; gap: 14px; max-width: 480px; margin-top: 8px; }
+label { display: grid; gap: 6px; font-weight: 600; font-size: .9rem; }
+input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+button { font: inherit; font-weight: 700; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; justify-self: start; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.row button, #history button { background: #fff; color: var(--accent); }
+#history { list-style: none; padding: 0; margin: 16px 0 24px; display: grid; gap: 8px; }
+#history button { width: 100%; text-align: left; font-weight: 500; }
+[role=status] { min-height: 1.4em; line-height: 1.5; }
+.ok { color: var(--ok); } .error { color: var(--error); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+caption { text-align: left; font-weight: 700; margin-bottom: 8px; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow: auto; font-size: .8rem; }
+summary { cursor: pointer; margin-top: 16px; font-weight: 600; }
