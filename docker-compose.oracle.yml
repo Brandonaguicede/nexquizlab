@@ -1,0 +1,16 @@
+# Overlay for a single Oracle Ampere A1 VM. Always combine with production.
+# Builds on the VM, so Docker Hub publication is optional.
+services:
+  auth-api:
+    build: { context: ., dockerfile: apps/auth-api/Dockerfile }
+  game-api:
+    build: { context: ., dockerfile: apps/game-api/Dockerfile }
+  web:
+    build: { context: ., dockerfile: apps/web/Dockerfile }
+  results-client:
+    build: { context: ., dockerfile: apps/results-client/Dockerfile }
+  prometheus:
+    command: [--config.file=/etc/prometheus/prometheus.yml, --storage.tsdb.retention.time=7d, --storage.tsdb.retention.size=2GB]
+secrets:
+  jwt_private: { file: ./secrets/oracle/jwt-private.pem }
+  jwt_public: { file: ./secrets/oracle/jwt-public.pem }
