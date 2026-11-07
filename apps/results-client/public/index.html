@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>NexQuiz · Cliente de resultados</title>
+ <link rel="stylesheet" href="styles.css">
+ <script src="config.js"></script>
+ <script src="app.js" defer></script>
+</head>
+<body>
+ <main>
+  <header>
+   <p class="eyebrow">Cliente independiente · consume la API documentada</p>
+   <h1>Resultados de NexQuiz</h1>
+   <p class="lead">Esta página no comparte código ni base de datos con NexQuiz. Se conecta por red a las URL configuradas y se autentica con un token de Auth.</p>
+   <dl class="config"><div><dt>Auth API</dt><dd id="auth-url">—</dd></div><div><dt>Game API</dt><dd id="game-url">—</dd></div></dl>
+  </header>
+
+  <section id="login-section" aria-labelledby="login-title">
+   <h2 id="login-title">1. Iniciar sesión</h2>
+   <form id="login-form">
+    <label>Correo electrónico<input name="email" type="email" autocomplete="username" required></label>
+    <label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Obtener token</button>
+   </form>
+   <p id="login-status" role="status"></p>
+  </section>
+
+  <section id="query-section" aria-labelledby="query-title" hidden>
+   <h2 id="query-title">2. Consultar partidas</h2>
+   <div class="row">
+    <button type="button" data-role="host">Partidas que organicé</button>
+    <button type="button" data-role="participant">Partidas que jugué</button>
+   </div>
+   <ul id="history" aria-live="polite"></ul>
+   <form id="session-form">
+    <label>ID de una sesión<input name="sessionId" required pattern="[0-9a-fA-F-]{36}" placeholder="00000000-0000-4000-8000-000000000000"></label>
+    <button type="submit">Consultar sesión y resultados</button>
+   </form>
+   <p id="query-status" role="status"></p>
+  </section>
+
+  <section id="result-section" aria-labelledby="result-title" hidden>
+   <h2 id="result-title">3. Resultado</h2>
+   <dl id="session-summary" class="summary"></dl>
+   <table id="ranking"><caption>Clasificación guardada</caption><thead><tr><th scope="col">Puesto</th><th scope="col">Participante</th><th scope="col">Puntos</th><th scope="col">Aciertos</th></tr></thead><tbody></tbody></table>
+   <details><summary>Respuesta JSON de la API</summary><pre id="raw"></pre></details>
+  </section>
+ </main>
+</body>
+</html>

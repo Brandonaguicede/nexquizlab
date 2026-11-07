@@ -1,0 +1,18 @@
+# Static independent client. config.js is generated from AUTH_API_URL and GAME_API_URL at container start
+# (the official nginx image runs envsubst on /etc/nginx/templates/*.template).
+server {
+  listen 8080;
+  server_name _;
+  root /usr/share/nginx/html;
+  index index.html;
+  server_tokens off;
+  add_header X-Content-Type-Options nosniff always;
+  add_header Referrer-Policy no-referrer always;
+  add_header Content-Security-Policy "default-src 'self'; connect-src *; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'" always;
+  location = /config.js {
+    default_type application/javascript;
+    add_header Cache-Control "no-store" always;
+    return 200 'window.NEXQUIZ_CONFIG = { authUrl: "${AUTH_API_URL}", gameUrl: "${GAME_API_URL}" };';
+  }
+  location / { try_files $uri $uri/ /index.html; }
+}
