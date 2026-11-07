@@ -1,0 +1,31 @@
+{$SITE_ADDRESS} {
+  encode zstd gzip
+  header {
+    X-Content-Type-Options nosniff
+    Referrer-Policy strict-origin-when-cross-origin
+    Strict-Transport-Security "max-age=31536000"
+  }
+  handle_path /auth/* {
+    reverse_proxy auth-api:3001 {
+      header_up X-Forwarded-Prefix /auth
+    }
+  }
+  # reverse_proxy upgrades WebSocket connections (Socket.IO at /game/socket.io) without extra configuration.
+  handle_path /game/* {
+    reverse_proxy game-api:3002 {
+      header_up X-Forwarded-Prefix /game
+    }
+  }
+  # Independent results client (static), same origin under /client/.
+  redir /client /client/
+  handle_path /client/* {
+    reverse_proxy results-client:8080
+  }
+  handle {
+    reverse_proxy web:8080
+  }
+  log {
+    output stdout
+    format json
+  }
+}
