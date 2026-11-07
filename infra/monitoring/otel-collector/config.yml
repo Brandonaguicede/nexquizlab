@@ -1,0 +1,35 @@
+receivers:
+  otlp:
+    protocols:
+      http: { endpoint: '0.0.0.0:4318' }
+  # Black-box availability of every team service, including the static web and the independent client.
+  httpcheck:
+    collection_interval: 15s
+    targets:
+      - endpoint: http://web:8080/
+      - endpoint: http://results-client:8080/
+      - endpoint: http://auth-api:3001/api/v1/health/ready
+      - endpoint: http://game-api:3002/api/v1/health/ready
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 128
+    spike_limit_mib: 32
+  batch: {}
+exporters:
+  prometheus:
+    endpoint: '0.0.0.0:8889'
+    resource_to_telemetry_conversion: { enabled: true }
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls: { insecure: true }
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/tempo]
+    metrics:
+      receivers: [otlp, httpcheck]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus]

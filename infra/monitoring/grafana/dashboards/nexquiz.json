@@ -1,0 +1,216 @@
+{
+  "uid": "nexquiz-overview",
+  "title": "NexQuiz — Services and live games",
+  "schemaVersion": 39,
+  "version": 3,
+  "refresh": "15s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Collector scrape availability",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "up{job=\"nexquiz-otel\"}"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 6
+      }
+    },
+    {
+      "id": 2,
+      "title": "NexQuiz HTTP request duration (p95, seconds)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, api) (rate(nexquiz_http_duration_seconds_bucket[5m])))",
+          "legendFormat": "{{api}}"
+        }
+      ],
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 16,
+        "h": 6
+      }
+    },
+    {
+      "id": 3,
+      "title": "Last API readiness result (1 = ready, 0 = unavailable)",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "nexquiz_service_ready",
+          "legendFormat": "{{api}}"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 8,
+        "h": 6
+      }
+    },
+    {
+      "id": 4,
+      "title": "NexQuiz HTTP requests / second",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (api, route, status_code) (rate(nexquiz_http_requests_total[5m]))",
+          "legendFormat": "{{api}} {{route}} {{status_code}}"
+        }
+      ],
+      "gridPos": {
+        "x": 8,
+        "y": 6,
+        "w": 16,
+        "h": 6
+      }
+    },
+    {
+      "id": 5,
+      "title": "Service availability, black-box (1 = responding 2xx)",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "max by (http_url) (httpcheck_status{http_status_class=\"2xx\"})",
+          "legendFormat": "{{http_url}}"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 5
+      }
+    },
+    {
+      "id": 6,
+      "title": "Live sessions by status",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (status) (nexquiz_game_sessions)",
+          "legendFormat": "{{status}}"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 12,
+        "h": 7
+      }
+    },
+    {
+      "id": 7,
+      "title": "Open realtime connections (Socket.IO)",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum(nexquiz_live_connections)",
+          "legendFormat": "connections"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 17,
+        "w": 12,
+        "h": 7
+      }
+    },
+    {
+      "id": 8,
+      "title": "Answers per second by outcome",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (outcome) (rate(nexquiz_answers_total[1m]))",
+          "legendFormat": "{{outcome}}"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 7
+      }
+    },
+    {
+      "id": 9,
+      "title": "Realtime events per second by type",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "nexquiz-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (type) (rate(nexquiz_live_events_total[1m]))",
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 7
+      }
+    },
+    {
+      "id": 10,
+      "title": "Traces",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Traces from both APIs are stored in **Grafana Tempo**. Open *Explore* → data source **NexQuiz Tempo** → Search, and filter by service name `nexquiz-game-api` or `nexquiz-auth-api`."
+      }
+    }
+  ]
+}
