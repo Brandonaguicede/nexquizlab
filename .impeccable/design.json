@@ -1,0 +1,579 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-05T00:00:00Z",
+  "title": "Design System: NexQuiz",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "bg",
+        "canonical": "#080f1b",
+        "tonalRamp": [
+          "oklch(15% 0.0277 260.43)",
+          "oklch(25% 0.0277 260.43)",
+          "oklch(35% 0.0277 260.43)",
+          "oklch(45% 0.0277 260.43)",
+          "oklch(55% 0.0277 260.43)",
+          "oklch(65% 0.0277 260.43)",
+          "oklch(80% 0.0277 260.43)",
+          "oklch(95% 0.0277 260.43)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "surface",
+        "canonical": "#0e192b",
+        "tonalRamp": [
+          "oklch(15% 0.0392 259.86)",
+          "oklch(25% 0.0392 259.86)",
+          "oklch(35% 0.0392 259.86)",
+          "oklch(45% 0.0392 259.86)",
+          "oklch(55% 0.0392 259.86)",
+          "oklch(65% 0.0392 259.86)",
+          "oklch(80% 0.0392 259.86)",
+          "oklch(95% 0.0392 259.86)"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "surface 2",
+        "canonical": "#172742",
+        "tonalRamp": [
+          "oklch(15% 0.0549 260.34)",
+          "oklch(25% 0.0549 260.34)",
+          "oklch(35% 0.0549 260.34)",
+          "oklch(45% 0.0549 260.34)",
+          "oklch(55% 0.0549 260.34)",
+          "oklch(65% 0.0549 260.34)",
+          "oklch(80% 0.0549 260.34)",
+          "oklch(95% 0.0549 260.34)"
+        ]
+      },
+      "surface-sunk": {
+        "role": "neutral",
+        "displayName": "surface sunk",
+        "canonical": "#0a1424",
+        "tonalRamp": [
+          "oklch(15% 0.0359 259.45)",
+          "oklch(25% 0.0359 259.45)",
+          "oklch(35% 0.0359 259.45)",
+          "oklch(45% 0.0359 259.45)",
+          "oklch(55% 0.0359 259.45)",
+          "oklch(65% 0.0359 259.45)",
+          "oklch(80% 0.0359 259.45)",
+          "oklch(95% 0.0359 259.45)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "line",
+        "canonical": "#203653",
+        "tonalRamp": [
+          "oklch(15% 0.0589 255.78)",
+          "oklch(25% 0.0589 255.78)",
+          "oklch(35% 0.0589 255.78)",
+          "oklch(45% 0.0589 255.78)",
+          "oklch(55% 0.0589 255.78)",
+          "oklch(65% 0.0589 255.78)",
+          "oklch(80% 0.0589 255.78)",
+          "oklch(95% 0.0589 255.78)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "line strong",
+        "canonical": "#4c6c97",
+        "tonalRamp": [
+          "oklch(15% 0.0779 256.05)",
+          "oklch(25% 0.0779 256.05)",
+          "oklch(35% 0.0779 256.05)",
+          "oklch(45% 0.0779 256.05)",
+          "oklch(55% 0.0779 256.05)",
+          "oklch(65% 0.0779 256.05)",
+          "oklch(80% 0.0779 256.05)",
+          "oklch(95% 0.0779 256.05)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "text",
+        "canonical": "#f6f7fc",
+        "tonalRamp": [
+          "oklch(15% 0.0067 277.16)",
+          "oklch(25% 0.0067 277.16)",
+          "oklch(35% 0.0067 277.16)",
+          "oklch(45% 0.0067 277.16)",
+          "oklch(55% 0.0067 277.16)",
+          "oklch(65% 0.0067 277.16)",
+          "oklch(80% 0.0067 277.16)",
+          "oklch(95% 0.0067 277.16)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "muted",
+        "canonical": "#b5cbed",
+        "tonalRamp": [
+          "oklch(15% 0.0535 259.03)",
+          "oklch(25% 0.0535 259.03)",
+          "oklch(35% 0.0535 259.03)",
+          "oklch(45% 0.0535 259.03)",
+          "oklch(55% 0.0535 259.03)",
+          "oklch(65% 0.0535 259.03)",
+          "oklch(80% 0.0535 259.03)",
+          "oklch(95% 0.0535 259.03)"
+        ]
+      },
+      "subtle": {
+        "role": "neutral",
+        "displayName": "subtle",
+        "canonical": "#9eb9df",
+        "tonalRamp": [
+          "oklch(15% 0.0621 256.94)",
+          "oklch(25% 0.0621 256.94)",
+          "oklch(35% 0.0621 256.94)",
+          "oklch(45% 0.0621 256.94)",
+          "oklch(55% 0.0621 256.94)",
+          "oklch(65% 0.0621 256.94)",
+          "oklch(80% 0.0621 256.94)",
+          "oklch(95% 0.0621 256.94)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "accent",
+        "canonical": "#087cff",
+        "tonalRamp": [
+          "oklch(15% 0.2148 257.30)",
+          "oklch(25% 0.2148 257.30)",
+          "oklch(35% 0.2148 257.30)",
+          "oklch(45% 0.2148 257.30)",
+          "oklch(55% 0.2148 257.30)",
+          "oklch(65% 0.2148 257.30)",
+          "oklch(80% 0.2148 257.30)",
+          "oklch(95% 0.2148 257.30)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "accent hover",
+        "canonical": "#258dff",
+        "tonalRamp": [
+          "oklch(15% 0.1922 254.75)",
+          "oklch(25% 0.1922 254.75)",
+          "oklch(35% 0.1922 254.75)",
+          "oklch(45% 0.1922 254.75)",
+          "oklch(55% 0.1922 254.75)",
+          "oklch(65% 0.1922 254.75)",
+          "oklch(80% 0.1922 254.75)",
+          "oklch(95% 0.1922 254.75)"
+        ]
+      },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "accent text",
+        "canonical": "#39aaff",
+        "tonalRamp": [
+          "oklch(15% 0.1589 245.82)",
+          "oklch(25% 0.1589 245.82)",
+          "oklch(35% 0.1589 245.82)",
+          "oklch(45% 0.1589 245.82)",
+          "oklch(55% 0.1589 245.82)",
+          "oklch(65% 0.1589 245.82)",
+          "oklch(80% 0.1589 245.82)",
+          "oklch(95% 0.1589 245.82)"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "accent soft",
+        "canonical": "#12376a",
+        "tonalRamp": [
+          "oklch(15% 0.0985 257.47)",
+          "oklch(25% 0.0985 257.47)",
+          "oklch(35% 0.0985 257.47)",
+          "oklch(45% 0.0985 257.47)",
+          "oklch(55% 0.0985 257.47)",
+          "oklch(65% 0.0985 257.47)",
+          "oklch(80% 0.0985 257.47)",
+          "oklch(95% 0.0985 257.47)"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "on accent",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(25% 0.0000 89.88)",
+          "oklch(35% 0.0000 89.88)",
+          "oklch(45% 0.0000 89.88)",
+          "oklch(55% 0.0000 89.88)",
+          "oklch(65% 0.0000 89.88)",
+          "oklch(80% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "true": {
+        "role": "semantic",
+        "displayName": "true",
+        "canonical": "#12dca3",
+        "tonalRamp": [
+          "oklch(15% 0.1631 165.80)",
+          "oklch(25% 0.1631 165.80)",
+          "oklch(35% 0.1631 165.80)",
+          "oklch(45% 0.1631 165.80)",
+          "oklch(55% 0.1631 165.80)",
+          "oklch(65% 0.1631 165.80)",
+          "oklch(80% 0.1631 165.80)",
+          "oklch(95% 0.1631 165.80)"
+        ]
+      },
+      "true-ink": {
+        "role": "semantic",
+        "displayName": "true ink",
+        "canonical": "#003e32",
+        "tonalRamp": [
+          "oklch(15% 0.0614 174.69)",
+          "oklch(25% 0.0614 174.69)",
+          "oklch(35% 0.0614 174.69)",
+          "oklch(45% 0.0614 174.69)",
+          "oklch(55% 0.0614 174.69)",
+          "oklch(65% 0.0614 174.69)",
+          "oklch(80% 0.0614 174.69)",
+          "oklch(95% 0.0614 174.69)"
+        ]
+      },
+      "true-text": {
+        "role": "semantic",
+        "displayName": "true text",
+        "canonical": "#39e9bc",
+        "tonalRamp": [
+          "oklch(15% 0.1522 170.84)",
+          "oklch(25% 0.1522 170.84)",
+          "oklch(35% 0.1522 170.84)",
+          "oklch(45% 0.1522 170.84)",
+          "oklch(55% 0.1522 170.84)",
+          "oklch(65% 0.1522 170.84)",
+          "oklch(80% 0.1522 170.84)",
+          "oklch(95% 0.1522 170.84)"
+        ]
+      },
+      "true-soft": {
+        "role": "semantic",
+        "displayName": "true soft",
+        "canonical": "#0d3a34",
+        "tonalRamp": [
+          "oklch(15% 0.0490 182.48)",
+          "oklch(25% 0.0490 182.48)",
+          "oklch(35% 0.0490 182.48)",
+          "oklch(45% 0.0490 182.48)",
+          "oklch(55% 0.0490 182.48)",
+          "oklch(65% 0.0490 182.48)",
+          "oklch(80% 0.0490 182.48)",
+          "oklch(95% 0.0490 182.48)"
+        ]
+      },
+      "false": {
+        "role": "semantic",
+        "displayName": "false",
+        "canonical": "#ff5f83",
+        "tonalRamp": [
+          "oklch(15% 0.1953 10.04)",
+          "oklch(25% 0.1953 10.04)",
+          "oklch(35% 0.1953 10.04)",
+          "oklch(45% 0.1953 10.04)",
+          "oklch(55% 0.1953 10.04)",
+          "oklch(65% 0.1953 10.04)",
+          "oklch(80% 0.1953 10.04)",
+          "oklch(95% 0.1953 10.04)"
+        ]
+      },
+      "false-ink": {
+        "role": "semantic",
+        "displayName": "false ink",
+        "canonical": "#590e27",
+        "tonalRamp": [
+          "oklch(15% 0.1074 6.76)",
+          "oklch(25% 0.1074 6.76)",
+          "oklch(35% 0.1074 6.76)",
+          "oklch(45% 0.1074 6.76)",
+          "oklch(55% 0.1074 6.76)",
+          "oklch(65% 0.1074 6.76)",
+          "oklch(80% 0.1074 6.76)",
+          "oklch(95% 0.1074 6.76)"
+        ]
+      },
+      "false-text": {
+        "role": "semantic",
+        "displayName": "false text",
+        "canonical": "#ff8fa8",
+        "tonalRamp": [
+          "oklch(15% 0.1371 6.48)",
+          "oklch(25% 0.1371 6.48)",
+          "oklch(35% 0.1371 6.48)",
+          "oklch(45% 0.1371 6.48)",
+          "oklch(55% 0.1371 6.48)",
+          "oklch(65% 0.1371 6.48)",
+          "oklch(80% 0.1371 6.48)",
+          "oklch(95% 0.1371 6.48)"
+        ]
+      },
+      "false-soft": {
+        "role": "semantic",
+        "displayName": "false soft",
+        "canonical": "#402033",
+        "tonalRamp": [
+          "oklch(15% 0.0568 344.63)",
+          "oklch(25% 0.0568 344.63)",
+          "oklch(35% 0.0568 344.63)",
+          "oklch(45% 0.0568 344.63)",
+          "oklch(55% 0.0568 344.63)",
+          "oklch(65% 0.0568 344.63)",
+          "oklch(80% 0.0568 344.63)",
+          "oklch(95% 0.0568 344.63)"
+        ]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "success",
+        "canonical": "#4de3b2",
+        "tonalRamp": [
+          "oklch(15% 0.1450 167.26)",
+          "oklch(25% 0.1450 167.26)",
+          "oklch(35% 0.1450 167.26)",
+          "oklch(45% 0.1450 167.26)",
+          "oklch(55% 0.1450 167.26)",
+          "oklch(65% 0.1450 167.26)",
+          "oklch(80% 0.1450 167.26)",
+          "oklch(95% 0.1450 167.26)"
+        ]
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "danger",
+        "canonical": "#ff6a7e",
+        "tonalRamp": [
+          "oklch(15% 0.1816 14.82)",
+          "oklch(25% 0.1816 14.82)",
+          "oklch(35% 0.1816 14.82)",
+          "oklch(45% 0.1816 14.82)",
+          "oklch(55% 0.1816 14.82)",
+          "oklch(65% 0.1816 14.82)",
+          "oklch(80% 0.1816 14.82)",
+          "oklch(95% 0.1816 14.82)"
+        ]
+      },
+      "danger-soft": {
+        "role": "semantic",
+        "displayName": "danger soft",
+        "canonical": "#42202c",
+        "tonalRamp": [
+          "oklch(15% 0.0547 358.50)",
+          "oklch(25% 0.0547 358.50)",
+          "oklch(35% 0.0547 358.50)",
+          "oklch(45% 0.0547 358.50)",
+          "oklch(55% 0.0547 358.50)",
+          "oklch(65% 0.0547 358.50)",
+          "oklch(80% 0.0547 358.50)",
+          "oklch(95% 0.0547 358.50)"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "field",
+        "canonical": "#0a172a",
+        "tonalRamp": [
+          "oklch(15% 0.0424 257.84)",
+          "oklch(25% 0.0424 257.84)",
+          "oklch(35% 0.0424 257.84)",
+          "oklch(45% 0.0424 257.84)",
+          "oklch(55% 0.0424 257.84)",
+          "oklch(65% 0.0424 257.84)",
+          "oklch(80% 0.0424 257.84)",
+          "oklch(95% 0.0424 257.84)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Landing display",
+        "purpose": "Heavy three-line landing headline."
+      },
+      "headline": {
+        "displayName": "Application headline",
+        "purpose": "Greeting and large application headings."
+      },
+      "section-title": {
+        "displayName": "Section title",
+        "purpose": "Dashboard section grouping."
+      },
+      "lead": {
+        "displayName": "Supporting lead",
+        "purpose": "Blue-tinted explanatory copy."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Primary and secondary action labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Chips and compact metadata."
+      }
+    },
+    "shadows": [
+      {
+        "name": "primary-action",
+        "value": "inset 0 1px 2px #b2ddff60, 0 8px 24px -10px #007bffb3",
+        "purpose": "Primary buttons."
+      },
+      {
+        "name": "auth-plate",
+        "value": "inset 0 0 14px #138fff50, 0 16px 45px -18px #00102d",
+        "purpose": "Login and registration form plate."
+      },
+      {
+        "name": "questionnaire-plate",
+        "value": "inset 0 0 18px #2372c72b",
+        "purpose": "Teacher questionnaire cards."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-press",
+        "value": "transform 160ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Small scale feedback on active controls."
+      },
+      {
+        "name": "button-surface",
+        "value": "border-color 180ms ease-out, background-color 180ms ease-out, box-shadow 180ms ease-out",
+        "purpose": "Button hover states."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Removes animation and transition and uses automatic scrolling."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-shell",
+        "value": "1800px"
+      },
+      {
+        "name": "desktop-composition",
+        "value": "1181px"
+      },
+      {
+        "name": "medium",
+        "value": "1180px"
+      },
+      {
+        "name": "stack",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "600px"
+      }
+    ],
+    "themes": {
+      "default": "dark",
+      "behavior": "reference.css overrides the former light preference palette; all current reference surfaces remain dark."
+    },
+    "focus": {
+      "outline": "3px solid var(--accent-text)",
+      "outlineOffset": "3px"
+    },
+    "provenance": {
+      "mode": "Implementation of the five user-supplied reference screens, 2026-11-05",
+      "illustrations": "Four generated equivalent transparent cutouts, each with its exact prompt embedded; not original reference raster files.",
+      "screenshots": ".impeccable/review/reference/",
+      "source": "apps/web/src/styles/reference.css overrides global.css"
+    },
+    "preservedLiveStyles": {
+      "source": "apps/web/src/styles/live.css",
+      "note": "Existing game state feedback and countdown motion remain implemented; global reduced-motion override applies."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Luminous blue main action with press feedback.",
+      "html": "<button class=\"ds-primary\">Crear cuestionario</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:52px;padding:12px 22px;border-radius:15px;font:750 17px \"Manrope Variable\",sans-serif;cursor:pointer;transition:transform 160ms cubic-bezier(.16,1,.3,1),border-color 180ms ease-out,background-color 180ms ease-out,box-shadow 180ms ease-out;background:linear-gradient(175deg,#2f8cff,#0062f8);color:var(--on-accent,#fff);border:1px solid #459cff;box-shadow:inset 0 1px 2px #b2ddff60,0 8px 24px -10px #007bffb3}.ds-primary:hover{background:linear-gradient(175deg,#4a9bff,#0575ff)}.ds-primary:active{transform:scale(.98)}.ds-primary:disabled{background:var(--surface-2,#172742);color:var(--subtle,#9eb9df);box-shadow:none;cursor:not-allowed}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-field:focus-visible,.ds-nav a:focus-visible,.ds-card a:focus-visible{outline:3px solid var(--accent-text,#39aaff);outline-offset:3px}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined navy alternative action.",
+      "html": "<button class=\"ds-secondary\">Abrir editor</button>",
+      "css": ".ds-secondary{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:52px;padding:12px 22px;border-radius:15px;font:750 17px \"Manrope Variable\",sans-serif;cursor:pointer;transition:transform 160ms cubic-bezier(.16,1,.3,1),border-color 180ms ease-out,background-color 180ms ease-out,box-shadow 180ms ease-out;color:var(--text,#f6f7fc);background:linear-gradient(160deg,#111c2a66,#080f1b80);border:1px solid #506c92;box-shadow:inset 0 1px 2px #9fc7ff12}.ds-secondary:hover{background:#152a47;border-color:#54aaff}.ds-secondary:active{transform:scale(.98)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-field:focus-visible,.ds-nav a:focus-visible,.ds-card a:focus-visible{outline:3px solid var(--accent-text,#39aaff);outline-offset:3px}"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Labeled dark field with a blue focus boundary.",
+      "html": "<label class=\"ds-label\">Correo electr?nico<input class=\"ds-field\" type=\"email\" placeholder=\"Correo electr?nico\"></label>",
+      "css": ".ds-label{display:grid;gap:8px;font:700 16px \"Manrope Variable\",sans-serif;color:var(--text,#f6f7fc)}.ds-field{min-height:52px;min-width:0;padding:12px 16px;font:400 16px \"Manrope Variable\",sans-serif;color:var(--text,#f6f7fc);background:var(--field,#0a172a);border:1px solid #335d96;border-radius:17px}.ds-field::placeholder{color:var(--subtle,#9eb9df)}.ds-field:hover{border-color:var(--subtle,#9eb9df)}.ds-field:focus{border-color:var(--accent,#087cff);box-shadow:0 0 0 3px var(--accent-soft,#12376a)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-field:focus-visible,.ds-nav a:focus-visible,.ds-card a:focus-visible{outline:3px solid var(--accent-text,#39aaff);outline-offset:3px}"
+    },
+    {
+      "name": "Main navigation",
+      "kind": "nav",
+      "description": "Icon-led navigation with a blue active pill.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#home\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" width=\"23\" height=\"23\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"><path d=\"m3 10 9-7 9 7v10H3Z\"/><path d=\"M9 20v-7h6v7\"/></svg>Inicio</a><a href=\"#quizzes\">Mis cuestionarios</a></nav>",
+      "css": ".ds-nav{display:flex;gap:10px;font:650 16px \"Manrope Variable\",sans-serif}.ds-nav a{display:inline-flex;align-items:center;gap:12px;padding:12px 20px;border-radius:999px;color:#d8e6fc;text-decoration:none}.ds-nav a[aria-current]{color:#fff;background:linear-gradient(120deg,#084caa,#12356b)}.ds-nav a:hover{background:#122541}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-field:focus-visible,.ds-nav a:focus-visible,.ds-card a:focus-visible{outline:3px solid var(--accent-text,#39aaff);outline-offset:3px}"
+    },
+    {
+      "name": "Metadata chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Compact rounded metadata treatment.",
+      "html": "<span class=\"ds-chip\">6 preguntas</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border:1px solid #466185;border-radius:999px;color:#c2d6f6;background:#1d2d455c;font:650 14px \"Manrope Variable\",sans-serif}"
+    },
+    {
+      "name": "Questionnaire card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Navy content plate for real questionnaire information.",
+      "html": "<article class=\"ds-card\"><h3>Quiz de demostraci?n</h3><p>Seis preguntas de ciencias de verdadero o falso para probar una partida en vivo.</p><a href=\"#quiz\">Abrir editor</a></article>",
+      "css": ".ds-card{padding:28px;border:1px solid #456e9f;border-radius:21px;color:var(--text,#f6f7fc);background:linear-gradient(120deg,#12213a,#101c2d 70%);box-shadow:inset 0 0 18px #2372c72b;font-family:\"Manrope Variable\",sans-serif}.ds-card:hover{border-color:#249fff}.ds-card h3{margin:0 0 10px;font-size:28px;line-height:1.2;font-weight:750}.ds-card p{margin:0 0 18px;color:var(--muted,#b5cbed);font-size:17px;line-height:1.5}.ds-card a{color:var(--accent-text,#39aaff)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-field:focus-visible,.ds-nav a:focus-visible,.ds-card a:focus-visible{outline:3px solid var(--accent-text,#39aaff);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "NexQuiz, a luminous classroom",
+    "overview": "NexQuiz retains ProfeLink's blue identity and Manrope typography, with the dimensional dark-blue treatment explicitly supplied in the user's five reference screens on 2026-11-05. Electric-blue controls, cyan edge light, navy surfaces and educational 3D cutouts now define the shared visual language. The supplied references are the visual authority; this is not a claim of pixel identity to their original illustration files.\n\nThe current application uses a consistently dark palette, including when the operating system requests light mode. `apps/web/src/styles/reference.css`, imported after `global.css`, owns the current overrides. Preserve the established form labels, readable states and real data while extending the appearance.",
+    "keyCharacteristics": [
+      "Dark navy ground, blue-toned text and luminous primary actions.",
+      "Heavy Manrope headings, rounded controls and restrained cyan edge highlights.",
+      "Blue educational cutouts and vector ribbon geometry around meaningful HTML content.",
+      "Emerald and rose distinguish Verdadero and Falso during play."
+    ],
+    "rules": [
+      {
+        "name": "The Action-and-Answer Rule",
+        "body": "Keep blue for navigation and action, and emerald/rose for answer meaning. Do not substitute a second action palette.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "**Do** use the final dark tokens from `reference.css`, even under a light operating-system preference.",
+      "**Do** preserve the user's supplied blue illumination, pill controls and dimensional illustration language.",
+      "**Do** keep existing labels, real API data, focus states, loading states and role restrictions intact.",
+      "**Do** keep blue action and emerald/rose answer meaning distinct.",
+      "**Do** respect reduced motion and retain readable mobile reflow."
+    ],
+    "donts": [
+      "**Don't** restore the superseded automatic light palette or paper/green visual world.",
+      "**Don't** turn reference-specific page compositions into rules for every new screen.",
+      "**Don't** replace functional controls or meaningful text with flattened screenshot imagery.",
+      "**Don't** describe generated cutouts as the original reference assets or claim numerical pixel identity without evidence.",
+      "**Don't** add continuous decorative motion to frequently used application controls."
+    ]
+  }
+}
