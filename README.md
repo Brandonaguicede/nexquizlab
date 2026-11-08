@@ -135,8 +135,12 @@ Grafana (http://localhost:3000) tiene el dashboard **NexQuiz — Services and li
 
 ## Integrantes y aportes
 
-| Integrante | Aportes principales | Pull requests |
+| Integrante | Aportes principales | Rama / Pull request |
 | --- | --- | --- |
-| *(completar)* | | |
+| [xJDHA](https://github.com/xJDHA) | Servicio de autenticación, modelo de datos y reglas del juego | `feature/auth-service-and-game-domain` |
+| [Brandonaguicede](https://github.com/Brandonaguicede) | API REST, persistencia e imágenes, seguridad y especificación | `feature/game-api-rest-and-docs` |
+| [Andrey Tijerino Hernández](https://github.com/andreyhrndz) | Canal en vivo con Socket.IO, Docker, Compose y observabilidad | `feature/live-channel-and-observability` |
+| [Kenneth0609](https://github.com/Kenneth0609) | Scripts de arranque y despliegue, CI y documentación de despliegue | `feature/ops-scripts-ci-and-deploy-docs` |
+| [María Fernanda Chavarría Castillo](https://github.com/MaFe-C) | Interfaz web, cliente adicional y pruebas e2e | `feature/web-client-and-e2e-tests` |
 
 Los aportes identificables de cada integrante se ven en el historial de Git y en los PR de cada hito, que incluyen su cambio de OpenSpec archivado (`openspec/changes/archive/`).
