@@ -1,0 +1,188 @@
+name: nexquiz
+x-api: &api
+  restart: unless-stopped
+  init: true
+  networks: [nexquiz-network]
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  environment: &api-env
+    NODE_ENV: development
+    # The independent results client runs on its own origin and must be allowed by both APIs.
+    CORS_ORIGINS: ${CORS_ORIGINS:?Run node scripts/setup.cjs},${RESULTS_CLIENT_ORIGIN:-http://localhost:8081}
+    OTEL_SDK_DISABLED: 'false'
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    JWT_ISSUER: ${JWT_ISSUER}
+    JWT_AUDIENCE: nexquiz-game-api
+    JWT_KEY_ID: ${JWT_KEY_ID}
+  healthcheck:
+    test: [CMD, node, -e, "fetch('http://localhost:'+ (process.env.AUTH_PORT || process.env.GAME_PORT) +'/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+    interval: 15s
+    timeout: 8s
+    retries: 5
+    start_period: 30s
+services:
+  postgres:
+    image: postgres:17.7-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Run setup}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run setup}
+      AUTH_DB_USER: ${AUTH_DB_USER}
+      AUTH_DB_PASSWORD: ${AUTH_DB_PASSWORD}
+      GAME_DB_USER: ${GAME_DB_USER}
+      GAME_DB_PASSWORD: ${GAME_DB_PASSWORD}
+    ports: ["127.0.0.1:${POSTGRES_PORT:-5432}:5432"]
+    volumes:
+      - nexquiz-postgres-data:/var/lib/postgresql/data
+      - ./infra/docker/init-databases.sh:/docker-entrypoint-initdb.d/10-nexquiz.sh:ro
+    networks: [nexquiz-network]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  auth-migrate:
+    build: { context: ., dockerfile: apps/auth-api/Dockerfile }
+    image: ${DOCKERHUB_USER:-nexquiz}/nexquiz-auth-api:${IMAGE_TAG:-local}
+    command: [./node_modules/.bin/prisma, migrate, deploy]
+    environment:
+      AUTH_DATABASE_URL: postgresql://${AUTH_DB_USER}:${AUTH_DB_PASSWORD}@postgres:5432/nexquiz_auth?schema=public&connect_timeout=5&pool_timeout=5
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [nexquiz-network]
+  game-migrate:
+    build: { context: ., dockerfile: apps/game-api/Dockerfile }
+    image: ${DOCKERHUB_USER:-nexquiz}/nexquiz-game-api:${IMAGE_TAG:-local}
+    command: [./node_modules/.bin/prisma, migrate, deploy]
+    environment:
+      GAME_DATABASE_URL: postgresql://${GAME_DB_USER}:${GAME_DB_PASSWORD}@postgres:5432/nexquiz_game?schema=public&connect_timeout=5&pool_timeout=5
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [nexquiz-network]
+  auth-api:
+    <<: *api
+    build: { context: ., dockerfile: apps/auth-api/Dockerfile }
+    image: ${DOCKERHUB_USER:-nexquiz}/nexquiz-auth-api:${IMAGE_TAG:-local}
+    environment:
+      <<: *api-env
+      AUTH_PORT: 3001
+      DEMO_SEED: ${DEMO_SEED:-true}
+      DEMO_EMAIL_DOMAIN: ${DEMO_EMAIL_DOMAIN:-nexquiz.demo}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+      AUTH_DATABASE_URL: postgresql://${AUTH_DB_USER}:${AUTH_DB_PASSWORD}@postgres:5432/nexquiz_auth?schema=public&connect_timeout=5&pool_timeout=5
+      JWT_PRIVATE_KEY_PATH: /run/secrets/jwt_private
+      # Only proxies on the private Compose network (nginx/Caddy) may supply X-Forwarded-For for rate limiting.
+      TRUST_PROXY: uniquelocal
+      # Per-source allowances per 15 min (credential attempts / session renewal); see docs/security/authentication.md.
+      AUTH_SOURCE_LIMIT: ${AUTH_SOURCE_LIMIT:-300}
+      AUTH_RENEWAL_SOURCE_LIMIT: ${AUTH_RENEWAL_SOURCE_LIMIT:-3000}
+      JWT_KEY_ID: ${JWT_KEY_ID}
+    secrets: [jwt_private]
+    ports: ["127.0.0.1:${AUTH_PORT:-3001}:3001"]
+    depends_on:
+      auth-migrate: { condition: service_completed_successfully }
+  game-api:
+    <<: *api
+    build: { context: ., dockerfile: apps/game-api/Dockerfile }
+    image: ${DOCKERHUB_USER:-nexquiz}/nexquiz-game-api:${IMAGE_TAG:-local}
+    environment:
+      <<: *api-env
+      GAME_PORT: 3002
+      IMAGE_STORAGE_PATH: /app/images
+      GAME_MAX_PARTICIPANTS: ${GAME_MAX_PARTICIPANTS:-50}
+      GAME_DATABASE_URL: postgresql://${GAME_DB_USER}:${GAME_DB_PASSWORD}@postgres:5432/nexquiz_game?schema=public&connect_timeout=5&pool_timeout=5
+      JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public
+    secrets: [jwt_public]
+    ports: ["127.0.0.1:${GAME_PORT:-3002}:3002"]
+    volumes: [nexquiz-images:/app/images]
+    depends_on:
+      game-migrate: { condition: service_completed_successfully }
+  web:
+    image: ${DOCKERHUB_USER:-nexquiz}/nexquiz-web:${IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_AUTH_API_URL: /auth
+        VITE_GAME_API_URL: /game
+    ports: ["127.0.0.1:${WEB_PORT:-8080}:8080"]
+    restart: unless-stopped
+    networks: [nexquiz-network]
+    depends_on:
+      auth-api: { condition: service_healthy }
+      game-api: { condition: service_healthy }
+  results-client:
+    image: ${DOCKERHUB_USER:-nexquiz}/nexquiz-results-client:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: apps/results-client/Dockerfile }
+    environment:
+      # Browser-facing URLs: the client reaches the APIs through the public web proxy, like any external consumer.
+      AUTH_API_URL: ${PUBLIC_WEB_URL:-http://localhost:8080}/auth
+      GAME_API_URL: ${PUBLIC_WEB_URL:-http://localhost:8080}/game
+    ports: ["127.0.0.1:${RESULTS_CLIENT_PORT:-8081}:8080"]
+    restart: unless-stopped
+    networks: [nexquiz-network]
+  seed:
+    # Demo data through the public APIs (no database access); idempotent, runs on every start.
+    image: node:24.13.0-bookworm-slim
+    command: [node, /seed/seed.mjs]
+    user: node
+    read_only: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    environment:
+      AUTH_URL: http://auth-api:3001
+      GAME_URL: http://game-api:3002
+      DEMO_SEED: ${DEMO_SEED:-true}
+      DEMO_EMAIL_DOMAIN: ${DEMO_EMAIL_DOMAIN:-nexquiz.demo}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+    volumes: [./scripts/seed:/seed:ro]
+    networks: [nexquiz-network]
+    depends_on:
+      auth-api: { condition: service_healthy }
+      game-api: { condition: service_healthy }
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.145.0
+    command: [--config=/etc/otelcol/config.yaml]
+    volumes: [./infra/monitoring/otel-collector/config.yml:/etc/otelcol/config.yaml:ro]
+    networks: [nexquiz-network]
+    restart: unless-stopped
+  tempo:
+    image: grafana/tempo:2.8.2
+    command: [-config.file=/etc/tempo/tempo.yml]
+    volumes:
+      - ./infra/monitoring/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - nexquiz-tempo-data:/var/tempo
+    networks: [nexquiz-network]
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:v3.9.1
+    command: [--config.file=/etc/prometheus/prometheus.yml, --storage.tsdb.retention.time=15d]
+    volumes:
+      - ./infra/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - nexquiz-prometheus-data:/prometheus
+    networks: [nexquiz-network]
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:12.3.2
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?Run setup}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    ports: ["127.0.0.1:3000:3000"]
+    volumes:
+      - nexquiz-grafana-data:/var/lib/grafana
+      - ./infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks: [nexquiz-network]
+    restart: unless-stopped
+networks:
+  nexquiz-network: { name: nexquiz-network }
+volumes:
+  nexquiz-postgres-data: { name: nexquiz-postgres-data }
+  nexquiz-images: { name: nexquiz-images }
+  nexquiz-grafana-data: { name: nexquiz-grafana-data }
+  nexquiz-prometheus-data: { name: nexquiz-prometheus-data }
+  nexquiz-tempo-data: { name: nexquiz-tempo-data }
+secrets:
+  jwt_private: { file: ./secrets/jwt-private.pem }
+  jwt_public: { file: ./secrets/jwt-public.pem }

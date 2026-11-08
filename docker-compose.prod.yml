@@ -1,0 +1,194 @@
+# Standalone production definition: never merge this with the development file.
+name: nexquiz
+x-runtime: &runtime
+  restart: unless-stopped
+  init: true
+  networks: [nexquiz-network]
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  logging:
+    driver: json-file
+    options: { max-size: 10m, max-file: '3' }
+x-env: &env
+  NODE_ENV: production
+  CORS_ORIGINS: ${CORS_ORIGINS:?Set exact HTTPS origin}
+  OTEL_SDK_DISABLED: 'false'
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  JWT_ISSUER: ${JWT_ISSUER:?Set HTTPS issuer}
+  JWT_AUDIENCE: nexquiz-game-api
+  JWT_KEY_ID: ${JWT_KEY_ID}
+services:
+  postgres:
+    <<: *runtime
+    image: postgres:17.7-bookworm
+    cap_drop: []
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set credential}
+      AUTH_DB_USER: ${AUTH_DB_USER}
+      AUTH_DB_PASSWORD: ${AUTH_DB_PASSWORD:?Set credential}
+      GAME_DB_USER: ${GAME_DB_USER}
+      GAME_DB_PASSWORD: ${GAME_DB_PASSWORD:?Set credential}
+    volumes:
+      - nexquiz-postgres-data:/var/lib/postgresql/data
+      - ./infra/docker/init-databases.sh:/docker-entrypoint-initdb.d/10-nexquiz.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  auth-migrate:
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    image: ${DOCKERHUB_USER:?Set Docker Hub namespace}/nexquiz-auth-api:${IMAGE_TAG:?Set immutable release tag}
+    command: [./node_modules/.bin/prisma, migrate, deploy]
+    environment:
+      AUTH_DATABASE_URL: postgresql://${AUTH_DB_USER}:${AUTH_DB_PASSWORD}@postgres:5432/nexquiz_auth?schema=public&connect_timeout=5&pool_timeout=5
+    networks: [nexquiz-network]
+    depends_on:
+      postgres: { condition: service_healthy }
+  game-migrate:
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    image: ${DOCKERHUB_USER:?Set Docker Hub namespace}/nexquiz-game-api:${IMAGE_TAG:?Set release tag}
+    command: [./node_modules/.bin/prisma, migrate, deploy]
+    environment:
+      GAME_DATABASE_URL: postgresql://${GAME_DB_USER}:${GAME_DB_PASSWORD}@postgres:5432/nexquiz_game?schema=public&connect_timeout=5&pool_timeout=5
+    networks: [nexquiz-network]
+    depends_on:
+      postgres: { condition: service_healthy }
+  auth-api:
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    <<: *runtime
+    image: ${DOCKERHUB_USER:?Set Docker Hub namespace}/nexquiz-auth-api:${IMAGE_TAG:?Set release tag}
+    environment:
+      <<: *env
+      AUTH_PORT: 3001
+      DEMO_SEED: ${DEMO_SEED:-true}
+      DEMO_EMAIL_DOMAIN: ${DEMO_EMAIL_DOMAIN:-nexquiz.demo}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+      AUTH_DATABASE_URL: postgresql://${AUTH_DB_USER}:${AUTH_DB_PASSWORD}@postgres:5432/nexquiz_auth?schema=public&connect_timeout=5&pool_timeout=5
+      JWT_PRIVATE_KEY_PATH: /run/secrets/jwt_private
+      # Only proxies on the private Compose network (Caddy) may supply X-Forwarded-For for rate limiting.
+      TRUST_PROXY: uniquelocal
+      # Per-source allowances per 15 min (credential attempts / session renewal); see docs/security/authentication.md.
+      AUTH_SOURCE_LIMIT: ${AUTH_SOURCE_LIMIT:-300}
+      AUTH_RENEWAL_SOURCE_LIMIT: ${AUTH_RENEWAL_SOURCE_LIMIT:-3000}
+      JWT_KEY_ID: ${JWT_KEY_ID}
+    secrets: [jwt_private]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:3001/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      auth-migrate: { condition: service_completed_successfully }
+  game-api:
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    <<: *runtime
+    image: ${DOCKERHUB_USER:?Set Docker Hub namespace}/nexquiz-game-api:${IMAGE_TAG:?Set release tag}
+    environment:
+      <<: *env
+      GAME_PORT: 3002
+      IMAGE_STORAGE_PATH: /app/images
+      GAME_MAX_PARTICIPANTS: ${GAME_MAX_PARTICIPANTS:-50}
+      GAME_DATABASE_URL: postgresql://${GAME_DB_USER}:${GAME_DB_PASSWORD}@postgres:5432/nexquiz_game?schema=public&connect_timeout=5&pool_timeout=5
+      JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public
+    secrets: [jwt_public]
+    volumes: [nexquiz-images:/app/images]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:3002/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      game-migrate: { condition: service_completed_successfully }
+  web:
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    <<: *runtime
+    image: ${DOCKERHUB_USER:?Set Docker Hub namespace}/nexquiz-web:${IMAGE_TAG:?Set release tag}
+  results-client:
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    <<: *runtime
+    image: ${DOCKERHUB_USER:?Set Docker Hub namespace}/nexquiz-results-client:${IMAGE_TAG:?Set release tag}
+    # Served by Caddy at https://SITE/client/ (same origin, so production CORS stays HTTPS-only); it still reaches the APIs only by URL.
+    environment:
+      AUTH_API_URL: https://${SITE_ADDRESS:?Set public DNS name}/auth
+      GAME_API_URL: https://${SITE_ADDRESS:?Set public DNS name}/game
+  seed:
+    image: node:24.13.0-bookworm-slim
+    command: [node, /seed/seed.mjs]
+    user: node
+    read_only: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    environment:
+      AUTH_URL: http://auth-api:3001
+      GAME_URL: http://game-api:3002
+      DEMO_SEED: ${DEMO_SEED:-true}
+      DEMO_EMAIL_DOMAIN: ${DEMO_EMAIL_DOMAIN:-nexquiz.demo}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+    volumes: [./scripts/seed:/seed:ro]
+    networks: [nexquiz-network]
+    depends_on:
+      auth-api: { condition: service_healthy }
+      game-api: { condition: service_healthy }
+  proxy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    ports: ['80:80', '443:443', '443:443/udp']
+    environment: { SITE_ADDRESS: '${SITE_ADDRESS:?Set public DNS name}' }
+    volumes:
+      - ./infra/proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [nexquiz-network]
+    depends_on:
+      auth-api: { condition: service_healthy }
+      game-api: { condition: service_healthy }
+      web: { condition: service_started }
+      results-client: { condition: service_started }
+  otel-collector:
+    <<: *runtime
+    image: otel/opentelemetry-collector-contrib:0.145.0
+    command: [--config=/etc/otelcol/config.yaml]
+    volumes: [./infra/monitoring/otel-collector/config.yml:/etc/otelcol/config.yaml:ro]
+  tempo:
+    <<: *runtime
+    image: grafana/tempo:2.8.2
+    command: [-config.file=/etc/tempo/tempo.yml]
+    volumes:
+      - ./infra/monitoring/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - nexquiz-tempo-data:/var/tempo
+  prometheus:
+    <<: *runtime
+    image: prom/prometheus:v3.9.1
+    command: [--config.file=/etc/prometheus/prometheus.yml, --storage.tsdb.retention.time=15d]
+    volumes:
+      - ./infra/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - nexquiz-prometheus-data:/prometheus
+  grafana:
+    <<: *runtime
+    image: grafana/grafana:12.3.2
+    ports: ['127.0.0.1:3000:3000']
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?Set strong credential}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    volumes:
+      - nexquiz-grafana-data:/var/lib/grafana
+      - ./infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+networks:
+  nexquiz-network: { name: nexquiz-network }
+volumes:
+  nexquiz-postgres-data: { name: nexquiz-postgres-data }
+  nexquiz-images: { name: nexquiz-images }
+  nexquiz-grafana-data: { name: nexquiz-grafana-data }
+  nexquiz-prometheus-data: { name: nexquiz-prometheus-data }
+  nexquiz-tempo-data: { name: nexquiz-tempo-data }
+  caddy-data:
+  caddy-config:
+secrets:
+  jwt_private: { file: ./secrets/jwt-private.pem }
+  jwt_public: { file: ./secrets/jwt-public.pem }
