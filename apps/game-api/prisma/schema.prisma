@@ -1,0 +1,150 @@
+generator client {
+ provider = "prisma-client-js"
+ output = "../generated/client"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("GAME_DATABASE_URL")
+}
+model ServiceMetadata {
+ key String @id @db.VarChar(100)
+ value String
+ updatedAt DateTime @updatedAt
+}
+
+model Quiz {
+ id String @id @default(uuid()) @db.Uuid
+ ownerId String @db.Uuid
+ title String @db.VarChar(160)
+ description String @default("") @db.VarChar(2000)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ deletedAt DateTime?
+ questions Question[]
+ sessions GameSession[]
+ @@index([ownerId, deletedAt, updatedAt(sort: Desc), id])
+}
+
+model Question {
+ id String @id @default(uuid()) @db.Uuid
+ quizId String @db.Uuid
+ quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Restrict)
+ prompt String @db.VarChar(2000)
+ correctAnswer Boolean
+ position Int?
+ imageId String? @unique @db.Uuid
+ image ImageAsset? @relation(fields: [imageId], references: [id], onDelete: Restrict)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ deletedAt DateTime?
+ @@unique([quizId, position])
+}
+
+model ImageAsset {
+ id String @id @default(uuid()) @db.Uuid
+ ownerId String @db.Uuid
+ createdAt DateTime @default(now())
+ detachedAt DateTime?
+ question Question?
+ @@index([createdAt])
+}
+
+enum GameStatus {
+ LOBBY
+ QUESTION_OPEN
+ QUESTION_CLOSED
+ FINISHED
+ CANCELLED
+}
+
+// Live game session. The quiz content is copied into GameQuestion/GameImage at creation,
+// so authoring changes never alter a game. Join code uniqueness among non-terminal sessions
+// is a partial unique index declared in the migration SQL.
+model GameSession {
+ id String @id @default(uuid()) @db.Uuid
+ code String @db.VarChar(6)
+ hostId String @db.Uuid
+ sourceQuizId String @db.Uuid
+ sourceQuiz Quiz @relation(fields: [sourceQuizId], references: [id], onDelete: Restrict)
+ title String @db.VarChar(160)
+ description String @default("") @db.VarChar(2000)
+ status GameStatus @default(LOBBY)
+ questionSeconds Int
+ maxParticipants Int
+ currentPosition Int?
+ openedAt DateTime?
+ deadline DateTime?
+ version Int @default(0)
+ createdAt DateTime @default(now())
+ startedAt DateTime?
+ finishedAt DateTime?
+ questions GameQuestion[]
+ images GameImage[]
+ participants Participant[]
+ results GameResult[]
+ @@index([hostId, status, createdAt(sort: Desc)])
+ @@index([status, deadline])
+}
+
+model GameQuestion {
+ id String @id @default(uuid()) @db.Uuid
+ sessionId String @db.Uuid
+ session GameSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+ sourceQuestionId String? @db.Uuid // provenance only; no foreign key so authoring stays independent
+ position Int
+ prompt String @db.VarChar(2000)
+ correctAnswer Boolean
+ imageId String? @unique @db.Uuid
+ image GameImage? @relation(fields: [imageId], references: [id], onDelete: Restrict)
+ answers Answer[]
+ @@unique([sessionId, position])
+}
+
+// Retained copy of an authoring image; never collected by the authoring image cleanup.
+model GameImage {
+ id String @id @default(uuid()) @db.Uuid
+ sessionId String @db.Uuid
+ session GameSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+ createdAt DateTime @default(now())
+ question GameQuestion?
+ @@index([sessionId])
+}
+
+model Participant {
+ id String @id @default(uuid()) @db.Uuid
+ sessionId String @db.Uuid
+ session GameSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+ userId String @db.Uuid
+ displayName String @db.VarChar(100)
+ joinedAt DateTime @default(now())
+ answers Answer[]
+ result GameResult?
+ @@unique([sessionId, userId])
+ @@index([userId, joinedAt(sort: Desc)])
+}
+
+// UNIQUE(gameQuestionId, participantId) is what prevents scoring the same answer twice.
+model Answer {
+ id String @id @default(uuid()) @db.Uuid
+ gameQuestionId String @db.Uuid
+ question GameQuestion @relation(fields: [gameQuestionId], references: [id], onDelete: Restrict)
+ participantId String @db.Uuid
+ participant Participant @relation(fields: [participantId], references: [id], onDelete: Restrict)
+ value Boolean
+ correct Boolean
+ receivedAt DateTime @default(now())
+ @@unique([gameQuestionId, participantId])
+ @@index([participantId])
+}
+
+model GameResult {
+ sessionId String @db.Uuid
+ session GameSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+ participantId String @unique @db.Uuid
+ participant Participant @relation(fields: [participantId], references: [id], onDelete: Restrict)
+ score Int
+ correctCount Int
+ rank Int
+ @@id([sessionId, participantId])
+ @@index([sessionId, rank])
+}
