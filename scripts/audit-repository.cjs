@@ -25,6 +25,8 @@ for (const file of files) {
   for (const match of text.matchAll(/\b(?:password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|jwt[_-]?secret)\b\s*[:=]\s*["']([^"'\r\n]{12,})["']/gi)) {
     // These two SQL clauses bind psql variables; they contain no password literals.
     if (file === 'infra/docker/init-databases.sh' && /^PASSWORD\s+:'(?:auth|game)_password'$/i.test(match[0])) continue;
+    // Unit/e2e specs use throwaway passwords on purpose; the other checks below still scan them.
+    if (/(?:^|\/)tests?\/|\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file)) continue;
     if (!/CHANGE_|example|fixture|\$\{|test|process\./i.test(match[1])) findings.push([file,'potential literal credential assignment']);
   }
   if (secrets.some(secret => text.includes(secret) || text.includes(encodeURIComponent(secret)))) findings.push([file,'matches an existing local secret']);
