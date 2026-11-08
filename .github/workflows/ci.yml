@@ -1,5 +1,10 @@
 name: NexQuiz foundation and identity
-on: [push, pull_request]
+# Feature branches are verified through their pull request (merged with main);
+# a push run on a feature branch alone lacks the other teams' apps and always fails.
+on:
+  push:
+    branches: [main]
+  pull_request:
 permissions:
   contents: read
 jobs:
