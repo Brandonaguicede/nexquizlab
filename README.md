@@ -24,6 +24,19 @@ Componentes de infraestructura: PostgreSQL 17, nginx como proxy de la web, OpenT
 | Game API · Scalar | http://localhost:8080/game/docs · `/game/openapi.json` | |
 | Grafana | http://localhost:3000 | |
 
+### Imágenes en Docker Hub
+
+Las imágenes del equipo están publicadas en el namespace [`brandonwilmer`](https://hub.docker.com/u/brandonwilmer), con la etiqueta `0.1.0`:
+
+| Aplicación | Imagen |
+| --- | --- |
+| Interfaz web | `brandonwilmer/nexquiz-web:0.1.0` |
+| Auth API | `brandonwilmer/nexquiz-auth-api:0.1.0` |
+| Game API | `brandonwilmer/nexquiz-game-api:0.1.0` |
+| Cliente adicional | `brandonwilmer/nexquiz-results-client:0.1.0` |
+
+`scripts/start.sh --hub` (o `.\scripts\start.ps1 -Hub`) las descarga y no construye nada. Las dos APIs pesan unos 1,3 GB cada una, por lo que la primera descarga tarda. Para publicar una versión nueva: `node scripts/release.cjs` construye las cuatro imágenes y después se suben con `docker push`.
+
 ## Requisitos previos
 
 - **Git** y **Docker** con **Docker Compose v2**: Docker Desktop en Windows o macOS, o Docker Engine con el plugin compose en Linux. No hace falta instalar Node.js para ejecutar la solución.
@@ -107,7 +120,7 @@ Con `DEMO_SEED=true`, Auth prepara automáticamente el profesor de demostración
 - [Arquitectura y decisiones](docs/architecture/README.md) · [modelo de datos](docs/database/README.md)
 - [Contratos REST](docs/api/README.md) · [canal en vivo: eventos, autenticación y recuperación](docs/api/realtime.md)
 - [Seguridad de autenticación](docs/security/authentication.md) · [imágenes](docs/security/quiz-images.md)
-- [Oracle Cloud Always Free](docs/deployment/oracle.md) ? [Despliegue](docs/deployment/README.md) · [Docker Hub y VPS](docs/deployment/production.md)
+- [Oracle Cloud Always Free](docs/deployment/oracle.md) · [Despliegue](docs/deployment/README.md) · [Docker Hub y VPS](docs/deployment/production.md)
 - [Pruebas y evidencia](docs/testing/README.md): [Hito 6](docs/testing/hito-6.md) (observabilidad, capacidad y producción), [Hito 5](docs/testing/hito-5.md) y [Hito 4](docs/testing/hito-4.md) · [versiones](docs/versions.md)
 
 ## Desarrollo
