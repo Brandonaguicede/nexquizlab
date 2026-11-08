@@ -1,0 +1,20 @@
+const { parseEnv } = require('node:util');
+const fs = require('node:fs');
+const args = process.argv.slice(2);
+if (args.length && (args.length !== 2 || args[0] !== '--env-file')) throw new Error('Usage: node scripts/check-production.cjs [--env-file path]');
+const env = { ...parseEnv(fs.readFileSync(args[1] || '.env','utf8')), ...process.env };
+const required=['POSTGRES_USER','POSTGRES_PASSWORD','AUTH_DB_USER','AUTH_DB_PASSWORD','GAME_DB_USER','GAME_DB_PASSWORD','GRAFANA_PASSWORD','DOCKERHUB_USER','IMAGE_TAG','SITE_ADDRESS','CORS_ORIGINS','JWT_ISSUER'];
+const invalid=required.filter(k=>!env[k] || /CHANGE_|example|localhost/.test(env[k]));
+if (env.IMAGE_TAG==='latest') invalid.push('IMAGE_TAG');
+if (!/^[a-z0-9][a-z0-9_-]*$/.test(env.DOCKERHUB_USER || '')) invalid.push('DOCKERHUB_USER');
+if (!/^[a-zA-Z0-9_][a-zA-Z0-9_.-]{0,127}$/.test(env.IMAGE_TAG || '')) invalid.push('IMAGE_TAG');
+if (!['linux/amd64','linux/arm64'].includes(env.DOCKER_PLATFORM || 'linux/amd64')) invalid.push('DOCKER_PLATFORM');
+if (env.SITE_ADDRESS?.includes('://') || !env.SITE_ADDRESS?.includes('.')) invalid.push('SITE_ADDRESS');
+for(const key of ['CORS_ORIGINS','JWT_ISSUER']) { for(const value of (env[key]||'').split(',')) { try { const u=new URL(value); if(u.protocol!=='https:' || (key==='CORS_ORIGINS' && u.origin!==value)) invalid.push(key); } catch { invalid.push(key); } } }
+for(const key of ['POSTGRES_PASSWORD','AUTH_DB_PASSWORD','GAME_DB_PASSWORD','GRAFANA_PASSWORD']) if((env[key]||'').length<32) invalid.push(key);
+if(new Set([env.POSTGRES_USER,env.AUTH_DB_USER,env.GAME_DB_USER]).size!==3)invalid.push('database roles must differ');
+if(new Set([env.POSTGRES_PASSWORD,env.AUTH_DB_PASSWORD,env.GAME_DB_PASSWORD]).size!==3)invalid.push('database passwords must differ');
+for(const key of ['AUTH_DB_PASSWORD','GAME_DB_PASSWORD'])if(!/^[a-zA-Z0-9_-]+$/.test(env[key]||''))invalid.push(key+' must be URL-safe');
+if(!fs.existsSync('pnpm-lock.yaml')) invalid.push('pnpm-lock.yaml');
+for(const file of [env.JWT_PRIVATE_KEY_FILE || 'secrets/jwt-private.pem',env.JWT_PUBLIC_KEY_FILE || 'secrets/jwt-public.pem'])if(!fs.existsSync(file))invalid.push(file);
+if(invalid.length){ console.error('Production configuration incomplete: '+[...new Set(invalid)].join(', '));process.exitCode=1; } else console.log('Production prerequisites passed. No credentials printed.');
