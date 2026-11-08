@@ -17,6 +17,11 @@ jobs:
         run: test -f pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: node scripts/setup.cjs
+      # The key is created as 0600 by the runner user (uid 1001), but the auth-api
+      # container runs as `node` (uid 1000) and reads it from a bind-mounted secret.
+      # This key exists only for this CI run, so making it readable is safe.
+      - name: Let the auth-api container read the CI-only JWT key
+        run: chmod 644 secrets/jwt-private.pem
       - run: pnpm prepare:scalar
       - run: pnpm verify
       - run: pnpm exec playwright install --with-deps chromium
@@ -31,6 +36,9 @@ jobs:
           pnpm test:identity:db
           pnpm test:identity
           node scripts/verify-http.cjs
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose ps -a && docker compose logs --no-color --tail 80 auth-api game-api
       - run: pnpm audit:repository
       - name: Validate development Compose
         run: docker compose config --quiet
