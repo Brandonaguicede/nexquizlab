@@ -17,11 +17,11 @@ Componentes de infraestructura: PostgreSQL 17, nginx como proxy de la web, OpenT
 
 | Servicio | Local | Pública |
 | --- | --- | --- |
-| Aplicación web | http://localhost:8080 | *Se completa al desplegar (Hito 6)* |
-| Unirse a una sala | http://localhost:8080/join | |
-| Cliente adicional | http://localhost:8081 | |
-| Auth API · Scalar | http://localhost:8080/auth/docs · `/auth/openapi.json` | |
-| Game API · Scalar | http://localhost:8080/game/docs · `/game/openapi.json` | |
+| Aplicación web | http://localhost:8080 | https://nexquiz.duckdns.org |
+| Unirse a una sala | http://localhost:8080/join | https://nexquiz.duckdns.org/join |
+| Cliente adicional | http://localhost:8081 | https://nexquiz.duckdns.org/client/ |
+| Auth API · Scalar | http://localhost:8080/auth/docs · `/auth/openapi.json` | https://nexquiz.duckdns.org/auth/docs |
+| Game API · Scalar | http://localhost:8080/game/docs · `/game/openapi.json` | https://nexquiz.duckdns.org/game/docs |
 | Grafana | http://localhost:3000 | |
 
 ### Imágenes en Docker Hub
@@ -148,8 +148,12 @@ Grafana (http://localhost:3000) tiene el dashboard **NexQuiz — Services and li
 
 ## Integrantes y aportes
 
-| Integrante | Aportes principales | Pull requests |
+| Integrante | Aportes principales | Rama |
 | --- | --- | --- |
-| *(completar)* | | |
+| [xJDHA](https://github.com/xJDHA) | Servicio de autenticación, modelo de datos y reglas del juego | `feature/auth-service-and-game-domain` |
+| [Brandonaguicede](https://github.com/Brandonaguicede) | API REST, persistencia e imágenes, seguridad y especificación | `feature/game-api-rest-and-docs` |
+| [Andrey Tijerino Hernández](https://github.com/andreyhrndz) | Canal en vivo con Socket.IO, Docker, Compose y observabilidad | `feature/live-channel-and-observability` |
+| [Kenneth0609](https://github.com/Kenneth0609) | Scripts de arranque y despliegue, CI y documentación de despliegue | `feature/ops-scripts-ci-and-deploy-docs` |
+| [María Fernanda Chavarría Castillo](https://github.com/MaFe-C) | Interfaz web, cliente adicional y pruebas e2e | `feature/web-client-and-e2e-tests` |
 
 Los aportes identificables de cada integrante se ven en el historial de Git y en los PR de cada hito, que incluyen su cambio de OpenSpec archivado (`openspec/changes/archive/`).
